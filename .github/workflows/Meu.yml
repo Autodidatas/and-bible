@@ -1,0 +1,45 @@
+name: Build APK - Autodidatas MBible
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout do código
+        uses: actions/checkout@v4
+
+      - name: ☕ Configurar Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: gradle
+
+      - name: 🔧 Dar permissão de execução ao Gradle Wrapper
+        run: chmod +x ./gradlew
+
+      - name: 🗄️ Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            \~/.gradle/caches
+            \~/.gradle/wrapper
+          key: \( {{ runner.os }}-gradle- \){{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: 🔍 Listar tasks disponíveis (debug)
+        run: ./gradlew tasks --stacktrace
+
+      - name: 🔥 Build APK (flavor StandardGithubDebug)
+        run: ./gradlew :app:assembleStandardGithubDebug --stacktrace --info --no-daemon
+
+      - name: 📦 Upload APK gerado
+        uses: actions/upload-artifact@v4
+        with:
+          name: mbible-apk-debug
+          path: app/build/outputs/apk/standardGithub/debug/*.apk
+          if-no-files-found: error
