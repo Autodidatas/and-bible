@@ -25,11 +25,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            \~/.gradle/caches
-            \~/.gradle/wrapper
-          key: \( {{ runner.os }}-gradle- \){{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            gradle-cache-${{ runner.os }}-
 
       - name: 🔍 Listar tasks disponíveis (debug)
         run: ./gradlew tasks --stacktrace
