@@ -21,6 +21,12 @@ jobs:
       - name: 🔧 Dar permissão de execução ao Gradle Wrapper
         run: chmod +x ./gradlew
 
+      - name: 🔧 Corrigir repositórios do pluginManagement
+        run: |
+          if ! grep -q "google()" settings.gradle.kts; then
+            sed -i 's/pluginManagement {/pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }/' settings.gradle.kts
+          fi
+
       - name: 🗄️ Cache Gradle dependencies
         uses: actions/cache@v4
         with:
